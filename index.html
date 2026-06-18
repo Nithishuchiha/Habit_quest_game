@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nithish Habit Quest 2026</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.28.1/tabler-icons.min.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a2e;--bg4:#16213e;
+--neon:#00f5ff;--neon2:#bf00ff;--neon3:#00ff88;--neon4:#ff6b35;--neon5:#ffd700;
+--card:#111827;--card2:#1f2937;--border:#ffffff18;
+--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+}
+body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+.app{max-width:900px;margin:0 auto;padding:12px}
+
+/* NAV */
+.nav{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:16px;overflow-x:auto}
+.nav-btn{flex:1;min-width:80px;padding:8px 4px;border:none;background:transparent;color:var(--text2);font-size:11px;border-radius:8px;cursor:pointer;transition:all .2s;text-align:center}
+.nav-btn.active{background:linear-gradient(135deg,#00f5ff22,#bf00ff22);color:var(--neon);border:1px solid var(--neon);font-weight:600}
+.nav-btn i{display:block;font-size:18px;margin-bottom:2px}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:block}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px}
+.xp-bar-wrap{flex:1;margin:0 12px}
+.xp-label{font-size:11px;color:var(--text2);margin-bottom:4px;display:flex;justify-content:space-between}
+.xp-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--neon2));border-radius:4px;transition:width .5s}
+.level-badge{background:linear-gradient(135deg,var(--neon2),var(--neon));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;font-size:13px;white-space:nowrap}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.cyan::before{background:var(--neon)}
+.stat-card.purple::before{background:var(--neon2)}
+.stat-card.green::before{background:var(--neon3)}
+.stat-card.orange::before{background:var(--neon4)}
+.stat-card.gold::before{background:var(--neon5)}
+.stat-val{font-size:22px;font-weight:700;line-height:1}
+.stat-label{font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.cyan .stat-val{color:var(--neon)}
+.purple .stat-val{color:var(--neon2)}
+.green .stat-val{color:var(--neon3)}
+.orange .stat-val{color:var(--neon4)}
+.gold .stat-val{color:var(--neon5)}
+
+/* TODAY SCREEN */
+.today-date{font-size:12px;color:var(--text3);margin-bottom:12px;text-align:center}
+.routine-group{margin-bottom:16px}
+.routine-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.habit-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.habit-item:hover{border-color:#ffffff30;background:var(--card2)}
+.habit-item.done{border-color:var(--neon);background:#00f5ff0a}
+.habit-item.done .habit-name{color:var(--neon)}
+.habit-check{width:24px;height:24px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.habit-item.done .habit-check{background:var(--neon);border-color:var(--neon)}
+.habit-item.done .habit-check i{color:#000}
+.habit-check i{font-size:14px;color:transparent}
+.habit-name{flex:1;font-size:14px}
+.habit-streak{font-size:11px;color:var(--neon4);font-weight:600}
+.xp-pop{position:absolute;right:12px;font-size:13px;font-weight:700;color:var(--neon5);opacity:0;pointer-events:none}
+.xp-pop.animate{animation:popUp .8s ease forwards}
+@keyframes popUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-30px)}}
+
+/* PROGRESS RING */
+.ring-wrap{display:flex;justify-content:center;margin-bottom:16px}
+.ring-container{position:relative;width:120px;height:120px}
+.ring-svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--bg3);stroke-width:10}
+.ring-prog{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-pct{font-size:22px;font-weight:700;color:var(--neon)}
+.ring-sub{font-size:10px;color:var(--text3)}
+
+/* HEATMAP */
+.heatmap-wrap{overflow-x:auto;margin-bottom:16px}
+.heatmap-grid{display:flex;gap:3px;min-width:600px}
+.heatmap-month{display:flex;flex-direction:column;gap:2px}
+.heatmap-month-label{font-size:9px;color:var(--text3);text-align:center;margin-bottom:3px}
+.heatmap-days{display:flex;gap:2px}
+.heatmap-week{display:flex;flex-direction:column;gap:2px}
+.hday{width:11px;height:11px;border-radius:2px;cursor:pointer;transition:all .15s}
+.hday:hover{transform:scale(1.5);z-index:10}
+.hday.l0{background:#1a1a2e}
+.hday.l1{background:#003d4d}
+.hday.l2{background:#006b6b}
+.hday.l3{background:#00a896}
+.hday.l4{background:#00f5ff}
+.hday.future{background:#0d0d14;opacity:.4}
+
+/* MONTHLY VIEW */
+.month-selector{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.month-btn{padding:6px 14px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0}
+.month-btn.active{background:var(--neon);color:#000;border-color:var(--neon);font-weight:600}
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
+.month-day-label{font-size:9px;color:var(--text3);text-align:center;padding:4px 0}
+.month-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:10px;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.month-day:hover{border-color:#ffffff30}
+.month-day.empty{background:transparent;cursor:default}
+.month-day.d0{background:#12121a}
+.month-day.d1{background:#1a3a2a;color:#4ade80}
+.month-day.d2{background:#1a4a2a;color:#4ade80}
+.month-day.d3{background:#0d7a5a;color:#a7f3d0}
+.month-day.d4{background:#059669;color:#fff}
+.month-day.perfect{background:var(--neon3);color:#000;font-weight:700;box-shadow:0 0 8px var(--neon3)}
+.month-day.today-marker{border:2px solid var(--neon)!important}
+.month-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* HAPPY LIST */
+.happy-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.happy-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.happy-title{font-size:14px;font-weight:600}
+.happy-unlock{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.unlock-yes{background:#00f5ff22;color:var(--neon);border:1px solid var(--neon)}
+.unlock-no{background:#ff6b3522;color:var(--neon4);border:1px solid var(--neon4)}
+.happy-condition{font-size:11px;color:var(--text3);margin-bottom:8px}
+.progress-mini{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.progress-mini-fill{height:100%;border-radius:3px;transition:width .5s}
+.add-happy-btn{width:100%;padding:12px;border:1px dashed var(--border);background:transparent;color:var(--text2);border-radius:10px;cursor:pointer;font-size:13px;transition:all .2s}
+.add-happy-btn:hover{border-color:var(--neon);color:var(--neon)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:#000000cc;display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal{background:var(--bg2);border:1px solid var(--neon);border-radius:16px;padding:20px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto}
+.modal h3{font-size:16px;margin-bottom:16px;color:var(--neon)}
+.form-group{margin-bottom:12px}
+.form-label{font-size:11px;color:var(--text2);margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px}
+.form-input:focus{outline:none;border-color:var(--neon)}
+.btn-row{display:flex;gap:8px;margin-top:16px}
+.btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000}
+.btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.btn:hover{opacity:.85}
+
+/* ACHIEVEMENT TOAST */
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:linear-gradient(135deg,#0a0a0f,#1a1a2e);border:1px solid var(--neon);border-radius:12px;padding:12px 20px;z-index:200;transition:transform .4s cubic-bezier(.34,1.56,.64,1);text-align:center;min-width:240px}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast-title{font-size:13px;font-weight:700;color:var(--neon5)}
+.toast-msg{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* BADGES */
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-bottom:16px}
+.badge-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.badge-card.earned{border-color:var(--neon5);background:#ffd7001a}
+.badge-icon{font-size:24px;margin-bottom:4px}
+.badge-name{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.3px}
+.badge-card.earned .badge-name{color:var(--neon5)}
+
+/* SECTION TITLE */
+.section-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* PARTICLE */
+.particles{position:fixed;pointer-events:none;z-index:300;inset:0}
+.particle{position:absolute;width:6px;height:6px;border-radius:50%;animation:burst .8s ease forwards}
+@keyframes burst{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
+
+/* MONTH ARC CHART */
+.arc-month{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.arc-month:last-child{border:none}
+.arc-month-name{width:36px;font-size:11px;color:var(--text2)}
+.arc-bar-wrap{flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.arc-bar{height:100%;border-radius:4px;transition:width 1s ease}
+.arc-pct{width:36px;font-size:11px;color:var(--text);text-align:right}
+
+</style>
+
+<div class="app">
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">Nithish Habit Quest 2026 — gamified habit tracker with 6 months of real data</h2>
+
+<div class="header">
+  <div>
+    <div class="level-badge" id="levelBadge">⚡ LVL 7 WARRIOR</div>
+    <div style="font-size:10px;color:var(--text3);margin-top:2px" id="totalXP">3,847 XP</div>
+  </div>
+  <div class="xp-bar-wrap">
+    <div class="xp-label"><span id="xpLabel">XP to next level</span><span id="xpNum">3847 / 4500</span></div>
+    <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:85%"></div></div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:11px;color:var(--neon4);font-weight:700" id="streakDisplay">🔥 0 day streak</div>
+    <div style="font-size:10px;color:var(--text3)">Best: 27 days</div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showScreen('today')"><i class="ti ti-bolt" aria-hidden="true"></i>Today</button>
+  <button class="nav-btn" onclick="showScreen('journey')"><i class="ti ti-flame" aria-hidden="true"></i>Journey</button>
+  <button class="nav-btn" onclick="showScreen('monthly')"><i class="ti ti-calendar" aria-hidden="true"></i>Monthly</button>
+  <button class="nav-btn" onclick="showScreen('rewards')"><i class="ti ti-gift" aria-hidden="true"></i>Happy List</button>
+  <button class="nav-btn" onclick="showScreen('badges')"><i class="ti ti-trophy" aria-hidden="true"></i>Badges</button>
+</div>
+
+<!-- TODAY SCREEN -->
+<div class="screen active" id="screen-today">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <div class="ring-wrap" style="margin:0"><div class="ring-container">
+      <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Today completion ring">
+        <circle class="ring-bg" cx="60" cy="60" r="50"/>
+        <circle class="ring-prog" cx="60" cy="60" r="50" id="ringCircle" stroke="url(#ringGrad)" stroke-dasharray="314" stroke-dashoffset="314"/>
+        <defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00f5ff"/><stop offset="100%" stop-color="#bf00ff"/></linearGradient></defs>
+      </svg>
+      <div class="ring-text"><div class="ring-pct" id="ringPct">0%</div><div class="ring-sub" id="ringCount">0/10</div></div>
+    </div></div>
+    <div style="flex:1">
+      <div class="today-date" style="text-align:left;margin:0 0 4px" id="todayDateStr">Loading...</div>
+      <div style="font-size:13px;color:var(--text2)" id="motiveLine">Complete your habits to earn XP!</div>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap" id="todayXPEarned">
+        <span style="font-size:11px;background:#ffd70022;color:var(--neon5);padding:3px 8px;border-radius:20px;border:1px solid #ffd70044">0 XP today</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="routineGroups"></div>
+</div>
+
+<!-- JOURNEY SCREEN -->
+<div class="screen" id="screen-journey">
+  <div class="section-title"><i class="ti ti-calendar-stats" aria-hidden="true"></i> 2026 Heatmap</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Every day of your journey — tap to explore</div>
+  <div class="heatmap-wrap"><div id="heatmapGrid" class="heatmap-grid"></div></div>
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;font-size:10px;color:var(--text3)">
+    <span>Less</span>
+    <div class="hday l0" style="width:10px;height:10px"></div>
+    <div class="hday l1" style="width:10px;height:10px"></div>
+    <div class="hday l2" style="width:10px;height:10px"></div>
+    <div class="hday l3" style="width:10px;height:10px"></div>
+    <div class="hday l4" style="width:10px;height:10px"></div>
+    <span>More</span>
+  </div>
+
+  <div class="section-title"><i class="ti ti-chart-bar" aria-hidden="true"></i> Monthly progress arc</div>
+  <div id="arcChart"></div>
+
+  <div class="section-title" style="margin-top:16px"><i class="ti ti-star" aria-hidden="true"></i> Year stats</div>
+  <div class="stats-grid" id="yearStats"></div>
+</div>
+
+<!-- MONTHLY SCREEN -->
+<div class="screen" id="screen-monthly">
+  <div class="month-selector" id="monthSelector"></div>
+  <div id="monthCalendar"></div>
+  <div class="month-stats-row" id="monthStatsRow"></div>
+</div>
+
+<!-- HAPPY LIST SCREEN -->
+<div class="screen" id="screen-rewards">
+  <div class="section-title"><i class="ti ti-heart" aria-hidden="true"></i> Your happy list</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Earn your happy moments by doing the work 💪</div>
+  <div id="happyListItems"></div>
+  <button class="add-happy-btn" onclick="openAddHappy()"><i class="ti ti-plus" aria-hidden="true"></i> Add a happy moment</button>
+</div>
+
+<!-- BADGES SCREEN -->
+<div class="screen" id="screen-badges">
+  <div class="section-title"><i class="ti ti-trophy" aria-hidden="true"></i> Achievements</div>
+  <div class="badges-grid" id="badgesGrid"></div>
+  <div class="section-title"><i class="ti ti-chart-line" aria-hidden="true"></i> All-time stats</div>
+  <div class="stats-grid" id="allTimeStats"></div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox">
+    <h3 id="modalTitle">Add happy moment</h3>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle"></div>
+  <div class="toast-msg" id="toastMsg"></div>
+</div>
+
+<div class="particles" id="particleContainer"></div>
+
+<script>
+const HABITS = [
+  {id:'wakeup',name:'Wake up at 6 AM',group:'morning',xp:15},
+  {id:'brush',name:'Brush daily',group:'morning',xp:10},
+  {id:'meditate',name:'Meditate 10+ min',group:'morning',xp:15},
+  {id:'comms',name:'Practice communication',group:'afternoon',xp:20},
+  {id:'tea',name:'Evening tea with sunset',group:'evening',xp:10},
+  {id:'exercise',name:'Exercise 30+ min',group:'evening',xp:25},
+  {id:'read',name:'Read 30+ min',group:'night',xp:20},
+  {id:'journal',name:'Journal',group:'night',xp:15},
+  {id:'sleep',name:'Sleep early before 10/11 PM',group:'night',xp:15},
+  {id:'nobad',name:'No bad habits',group:'night',xp:20},
+];
+
+const GROUPS = {
+  morning:{label:'Morning Routine',icon:'ti-sunrise'},
+  afternoon:{label:'Afternoon Routine',icon:'ti-sun'},
+  evening:{label:'Evening Routine',icon:'ti-sunset'},
+  night:{label:'Night Routine',icon:'ti-moon'},
+};
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const HISTORICAL = {
+  Jan:{days:31,completed:134,possible:434,dailyTotals:[9,12,9,14,11,4,14,1,10,3,0,0,0,11,0,0,0,0,0,0,13,4,3,8,12,6,0,0,0,0,0],maxHabits:14},
+  Feb:{days:28,completed:192,possible:392,dailyTotals:[2,12,2,11,12,12,13,11,8,7,10,5,13,14,9,12,2,0,1,0,0,0,0,5,6,10,11,4,0,0,0],maxHabits:14},
+  Mar:{days:31,completed:129,possible:310,dailyTotals:[6,4,7,1,2,1,2,1,8,6,7,4,0,0,0,0,1,10,4,4,8,7,10,10,6,5,8,2,2,3,0],maxHabits:10},
+  Apr:{days:30,completed:187,possible:300,dailyTotals:[5,9,10,8,6,4,6,7,6,5,5,4,7,9,10,10,9,9,2,9,10,4,2,2,10,5,8,4,1,1,0],maxHabits:10},
+  May:{days:31,completed:225,possible:310,dailyTotals:[8,9,3,6,3,10,10,7,9,9,10,6,10,8,10,10,8,9,8,8,10,9,10,4,9,5,5,3,2,9,2],maxHabits:10},
+  Jun:{days:30,completed:90,possible:300,dailyTotals:[9,9,9,10,5,4,3,1,1,1,1,1,1,9,9,5,9,3,0,0,0,0,0,0,0,0,0,0,0,0],maxHabits:10},
+};
+
+function getMonthRate(m){
+  const d=HISTORICAL[m];
+  return d?Math.round(d.completed/d.possible*100):0;
+}
+
+const TODAY = new Date();
+const todayKey = `${TODAY.getFullYear()}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(TODAY.getDate()).padStart(2,'0')}`;
+
+function getStorage(){
+  try{const s=localStorage.getItem('hq2026');return s?JSON.parse(s):{}} catch{return{}}
+}
+function saveStorage(d){
+  try{localStorage.setItem('hq2026',JSON.stringify(d))}catch{}
+}
+
+let store = getStorage();
+if(!store.habits) store.habits={};
+if(!store.happy) store.happy=[
+  {id:1,title:'Family time weekend',desc:'Spend quality time with family on Sat & Sun',condition:'Maintain 80%+ weekday completion this week',target:80,metric:'weekday_completion'},
+  {id:2,title:'Movie night treat',desc:'Watch a movie I really want',condition:'Hit 7-day reading streak',target:7,metric:'read_streak'},
+  {id:3,title:'Buy something nice',desc:'Treat myself to something on my wishlist',condition:'Complete all 10 habits for 5 days in a month',target:5,metric:'perfect_days'},
+];
+if(!store.xp) store.xp=3847;
+if(!store.level) store.level=7;
+
+function getTodayDone(){
+  const d=store.habits[todayKey]||{};
+  return Object.values(d).filter(Boolean).length;
+}
+function isHabitDone(hid){
+  return !!(store.habits[todayKey]&&store.habits[todayKey][hid]);
+}
+
+function getLevel(xp){
+  const thresholds=[0,200,500,1000,1800,2800,4000,5500,7500,10000,13000];
+  for(let i=thresholds.length-1;i>=0;i--){if(xp>=thresholds[i])return i+1;}
+  return 1;
+}
+const LEVEL_NAMES=['','Rookie','Learner','Hustler','Builder','Grinder','Warrior','Champion','Legend','Elite','Master'];
+const LEVEL_XP=[0,200,500,1000,1800,2800,4000,5500,7500,10000,13000,99999];
+
+function updateHeader(){
+  const xp=store.xp;
+  const lvl=getLevel(xp);
+  store.level=lvl;
+  const name=LEVEL_NAMES[Math.min(lvl,LEVEL_NAMES.length-1)]||'Master';
+  document.getElementById('levelBadge').textContent='⚡ LVL '+lvl+' '+name.toUpperCase();
+  document.getElementById('totalXP').textContent=xp.toLocaleString()+' XP';
+  const nextXP=LEVEL_XP[Math.min(lvl,LEVEL_XP.length-1)];
+  const prevXP=LEVEL_XP[Math.max(lvl-1,0)];
+  const pct=Math.min(100,Math.round((xp-prevXP)/(nextXP-prevXP)*100));
+  document.getElementById('xpFill').style.width=pct+'%';
+  document.getElementById('xpNum').textContent=xp.toLocaleString()+' / '+nextXP.toLocaleString();
+  const streak=calcTodayStreak();
+  document.getElementById('streakDisplay').textContent=(streak>0?'🔥':'💤')+' '+streak+' day streak';
+}
+
+function calcTodayStreak(){
+  let streak=0,d=new Date(TODAY);
+  while(true){
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const done=(store.habits[k]&&Object.values(store.habits[k]).filter(Boolean).length)||0;
+    if(done===0)break;
+    streak++;
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  const idx={today:0,journey:1,monthly:2,rewards:3,badges:4}[name];
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  if(name==='journey')renderJourney();
+  if(name==='monthly')renderMonthly();
+  if(name==='rewards')renderHappyList();
+  if(name==='badges')renderBadges();
+}
+
+function renderToday(){
+  const dateEl=document.getElementById('todayDateStr');
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  dateEl.textContent=days[TODAY.getDay()]+', '+MONTHS[TODAY.getMonth()]+' '+TODAY.getDate()+', '+TODAY.getFullYear();
+
+  const groups=document.getElementById('routineGroups');
+  groups.innerHTML='';
+  const byGroup={};
+  HABITS.forEach(h=>{if(!byGroup[h.group])byGroup[h.group]=[];byGroup[h.group].push(h);});
+
+  Object.entries(GROUPS).forEach(([gk,gv])=>{
+    if(!byGroup[gk])return;
+    const div=document.createElement('div');
+    div.className='routine-group';
+    div.innerHTML=`<div class="routine-title"><i class="ti ${gv.icon}" aria-hidden="true"></i>${gv.label}</div>`;
+    byGroup[gk].forEach(h=>{
+      const done=isHabitDone(h.id);
+      const streak=getHabitStreak(h.id);
+      const item=document.createElement('div');
+      item.className='habit-item'+(done?' done':'');
+      item.innerHTML=`<div class="habit-check"><i class="ti ti-check"></i></div>
+        <span class="habit-name">${h.name}</span>
+        ${streak>0?`<span class="habit-streak">🔥${streak}</span>`:''}
+        <div class="xp-pop" id="pop-${h.id}">+${h.xp} XP</div>`;
+      item.onclick=()=>toggleHabit(h.id,h.xp);
+      div.appendChild(item);
+    });
+    groups.appendChild(div);
+  });
+  updateRing();
+  updateTodayXP();
+}
+
+function getHabitStreak(hid){
+  let streak=0,d=new Date(TODAY);
+  while(true){
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if(!store.habits[k]||!store.habits[k][hid])break;
+    streak++;
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+
+function toggleHabit(hid,xp){
+  if(!store.habits[todayKey])store.habits[todayKey]={};
+  const was=store.habits[todayKey][hid];
+  store.habits[todayKey][hid]=!was;
+  if(!was){
+    store.xp=(store.xp||0)+xp;
+    fireParticles();
+    showXPPop(hid,xp);
+  } else {
+    store.xp=Math.max(0,(store.xp||0)-xp);
+  }
+  saveStorage(store);
+  renderToday();
+  updateHeader();
+  checkMilestones();
+}
+
+function showXPPop(hid,xp){
+  const el=document.getElementById('pop-'+hid);
+  if(!el)return;
+  el.classList.remove('animate');
+  void el.offsetWidth;
+  el.classList.add('animate');
+}
+
+function updateRing(){
+  const done=getTodayDone();
+  const total=HABITS.length;
+  const pct=Math.round(done/total*100);
+  const circle=document.getElementById('ringCircle');
+  const r=50,circ=2*Math.PI*r;
+  circle.style.strokeDashoffset=circ-(circ*pct/100);
+  document.getElementById('ringPct').textContent=pct+'%';
+  document.getElementById('ringCount').textContent=done+'/'+total;
+  const lines=['Keep going, Nithish! 💪','Great start! Keep pushing!','Halfway there! 🔥','Almost done! You\'re crushing it!','PERFECT DAY! 🏆 Legend!'];
+  const idx=pct===100?4:Math.floor(pct/25);
+  document.getElementById('motiveLine').textContent=lines[Math.min(idx,4)];
+}
+
+function updateTodayXP(){
+  const done=store.habits[todayKey]||{};
+  let xpToday=0;
+  HABITS.forEach(h=>{if(done[h.id])xpToday+=h.xp;});
+  document.getElementById('todayXPEarned').innerHTML=`<span style="font-size:11px;background:#ffd70022;color:var(--neon5);padding:3px 8px;border-radius:20px;border:1px solid #ffd70044">${xpToday} XP today</span>`;
+}
+
+function fireParticles(){
+  const c=document.getElementById('particleContainer');
+  const colors=['#00f5ff','#bf00ff','#00ff88','#ffd700','#ff6b35'];
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const x=Math.random()*window.innerWidth;
+    const y=Math.random()*window.innerHeight*.5+100;
+    const tx=(Math.random()-0.5)*200+'px';
+    const ty=-(Math.random()*150+50)+'px';
+    p.style.cssText=`left:${x}px;top:${y}px;background:${colors[i%colors.length]};--tx:${tx};--ty:${ty}`;
+    c.appendChild(p);
+    setTimeout(()=>p.remove(),900);
+  }
+}
+
+function checkMilestones(){
+  const done=getTodayDone();
+  const total=HABITS.length;
+  if(done===total){showToast('PERFECT DAY! 🏆','You completed ALL habits! +50 bonus XP!');store.xp+=50;updateHeader();}
+  else if(done===Math.ceil(total/2)&&done>0){showToast('Halfway Champion ⚡','Over 50% done — keep the momentum!');}
+}
+
+function showToast(title,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastTitle').textContent=title;
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function renderJourney(){
+  renderHeatmap();
+  renderArcChart();
+  renderYearStats();
+}
+
+function getDayLevel(count,max){
+  if(!max||count===0)return 0;
+  const r=count/max;
+  if(r<0.25)return 1;
+  if(r<0.5)return 2;
+  if(r<0.75)return 3;
+  return 4;
+}
+
+function renderHeatmap(){
+  const grid=document.getElementById('heatmapGrid');
+  grid.innerHTML='';
+  const monthNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  for(let m=0;m<12;m++){
+    const mName=monthNames[m];
+    const hist=HISTORICAL[mName];
+    const mDiv=document.createElement('div');
+    mDiv.className='heatmap-month';
+    mDiv.innerHTML=`<div class="heatmap-month-label">${mName}</div>`;
+    const daysDiv=document.createElement('div');
+    daysDiv.className='heatmap-days';
+    const daysInMonth=new Date(2026,m+1,0).getDate();
+    const firstDay=new Date(2026,m,1).getDay();
+    let week=document.createElement('div');
+    week.className='heatmap-week';
+    for(let blank=0;blank<firstDay;blank++){
+      const d=document.createElement('div');d.className='hday future';week.appendChild(d);
+    }
+    for(let day=1;day<=daysInMonth;day++){
+      const dayDate=new Date(2026,m,day);
+      const isFuture=dayDate>TODAY;
+      let level=0;
+      if(!isFuture){
+        const k=`2026-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const todayData=store.habits[k];
+        if(todayData){
+          const cnt=Object.values(todayData).filter(Boolean).length;
+          level=getDayLevel(cnt,HABITS.length);
+        } else if(hist&&hist.dailyTotals&&day<=hist.dailyTotals.length){
+          level=getDayLevel(hist.dailyTotals[day-1],hist.maxHabits);
+        }
+      }
+      const d=document.createElement('div');
+      d.className='hday '+(isFuture?'future':'l'+level);
+      d.title=`${mName} ${day}`;
+      daysDiv.appendChild(d);
+      if((firstDay+day)%7===0){daysDiv.appendChild(week);week=document.createElement('div');week.className='heatmap-week';}
+    }
+    daysDiv.appendChild(week);
+    mDiv.appendChild(daysDiv);
+    grid.appendChild(mDiv);
+  }
+}
+
+function renderArcChart(){
+  const el=document.getElementById('arcChart');
+  el.innerHTML='';
+  const completedMonths=['Jan','Feb','Mar','Apr','May','Jun'];
+  completedMonths.forEach(m=>{
+    const rate=getMonthRate(m);
+    const colors={Jan:'#00a8cc',Feb:'#7c5cbf',Mar:'#cc6b00',Apr:'#00cc88',May:'#ffd700',Jun:'#ff6b35'};
+    const row=document.createElement('div');
+    row.className='arc-month';
+    row.innerHTML=`<span class="arc-month-name">${m}</span>
+      <div class="arc-bar-wrap"><div class="arc-bar" style="width:${rate}%;background:${colors[m]||'#00f5ff'}"></div></div>
+      <span class="arc-pct">${rate}%</span>`;
+    el.appendChild(row);
+  });
+}
+
+function renderYearStats(){
+  const el=document.getElementById('yearStats');
+  const allCompleted=Object.values(HISTORICAL).reduce((a,v)=>a+v.completed,0);
+  const allPossible=Object.values(HISTORICAL).reduce((a,v)=>a+v.possible,0);
+  const todayBonus=getTodayDone();
+  const stats=[
+    {val:allCompleted+todayBonus,label:'Total completions',cls:'cyan'},
+    {val:Math.round((allCompleted+todayBonus)/Math.max(1,allPossible)*100)+'%',label:'Year rate',cls:'green'},
+    {val:27,label:'Best streak',cls:'orange'},
+    {val:6,label:'Months tracked',cls:'purple'},
+    {val:store.xp.toLocaleString(),label:'Total XP',cls:'gold'},
+  ];
+  el.innerHTML=stats.map(s=>`<div class="stat-card ${s.cls}"><div class="stat-val">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
+}
+
+let selectedMonth=TODAY.getMonth();
+function renderMonthly(){
+  const sel=document.getElementById('monthSelector');
+  sel.innerHTML='';
+  MONTHS.forEach((m,i)=>{
+    const btn=document.createElement('button');
+    btn.className='month-btn'+(i===selectedMonth?' active':'');
+    btn.textContent=m;
+    const hasData=!!HISTORICAL[m]||(i===TODAY.getMonth());
+    btn.style.opacity=hasData?'1':'0.4';
+    btn.onclick=()=>{selectedMonth=i;renderMonthly();};
+    sel.appendChild(btn);
+  });
+  renderMonthCalendar(selectedMonth);
+}
+
+function renderMonthCalendar(mi){
+  const cal=document.getElementById('monthCalendar');
+  const mName=MONTHS[mi];
+  const hist=HISTORICAL[mName];
+  const daysInMonth=new Date(2026,mi+1,0).getDate();
+  const firstDay=new Date(2026,mi,1).getDay();
+  const maxH=hist?hist.maxHabits:HABITS.length;
+  let html='<div class="month-grid">';
+  ['S','M','T','W','T','F','S'].forEach(d=>{html+=`<div class="month-day-label">${d}</div>`;});
+  for(let i=0;i<firstDay;i++)html+='<div class="month-day empty"></div>';
+  for(let day=1;day<=daysInMonth;day++){
+    const dayDate=new Date(2026,mi,day);
+    const isFuture=dayDate>TODAY;
+    const k=`2026-${String(mi+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isToday=k===todayKey;
+    let cnt=0,cls='d0';
+    if(!isFuture){
+      const tod=store.habits[k];
+      if(tod)cnt=Object.values(tod).filter(Boolean).length;
+      else if(hist&&hist.dailyTotals&&day<=hist.dailyTotals.length)cnt=hist.dailyTotals[day-1];
+      if(cnt===0)cls='d0';
+      else if(cnt===maxH)cls='perfect';
+      else if(cnt/maxH>=0.75)cls='d4';
+      else if(cnt/maxH>=0.5)cls='d3';
+      else if(cnt/maxH>=0.25)cls='d2';
+      else cls='d1';
+    } else {cls='d0';}
+    html+=`<div class="month-day ${cls}${isToday?' today-marker':''}" title="${mName} ${day}: ${cnt}/${maxH}">${day}</div>`;
+  }
+  html+='</div>';
+  cal.innerHTML=html;
+
+  const statsEl=document.getElementById('monthStatsRow');
+  const rate=hist?getMonthRate(mName):Math.round(getTodayDone()/HABITS.length*100);
+  const completed=hist?hist.completed:getTodayDone();
+  const possible=hist?hist.possible:HABITS.length;
+  const perfectDays=hist?hist.dailyTotals.filter(v=>v===hist.maxHabits).length:0;
+  statsEl.innerHTML=`
+    <div class="stat-card cyan"><div class="stat-val">${rate}%</div><div class="stat-label">Success rate</div></div>
+    <div class="stat-card green"><div class="stat-val">${completed}</div><div class="stat-label">Completions</div></div>
+    <div class="stat-card gold"><div class="stat-val">${perfectDays}</div><div class="stat-label">Perfect days</div></div>`;
+}
+
+function getWeeklyCompletionPct(){
+  const weekdays=[1,2,3,4,5];
+  let done=0,total=0;
+  for(let i=0;i<7;i++){
+    const d=new Date(TODAY);d.setDate(d.getDate()-i);
+    if(!weekdays.includes(d.getDay()))continue;
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const habits=store.habits[k]||{};
+    done+=Object.values(habits).filter(Boolean).length;
+    total+=HABITS.length;
+  }
+  return total>0?Math.round(done/total*100):0;
+}
+
+function getReadStreak(){return getHabitStreak('read');}
+
+function getPerfectDaysThisMonth(){
+  const mi=TODAY.getMonth();
+  const daysInMonth=TODAY.getDate();
+  let cnt=0;
+  for(let day=1;day<=daysInMonth;day++){
+    const k=`2026-${String(mi+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const habits=store.habits[k]||{};
+    if(Object.values(habits).filter(Boolean).length===HABITS.length)cnt++;
+  }
+  return cnt;
+}
+
+function getHappyProgress(item){
+  if(item.metric==='weekday_completion')return{current:getWeeklyCompletionPct(),target:item.target,unit:'%'};
+  if(item.metric==='read_streak')return{current:getReadStreak(),target:item.target,unit:' days'};
+  if(item.metric==='perfect_days')return{current:getPerfectDaysThisMonth(),target:item.target,unit:' days'};
+  return{current:0,target:item.target,unit:''};
+}
+
+function renderHappyList(){
+  const el=document.getElementById('happyListItems');
+  el.innerHTML='';
+  store.happy.forEach(item=>{
+    const prog=getHappyProgress(item);
+    const pct=Math.min(100,Math.round(prog.current/prog.target*100));
+    const unlocked=pct>=100;
+    const div=document.createElement('div');
+    div.className='happy-item';
+    div.innerHTML=`<div class="happy-header">
+      <div class="happy-title">🎯 ${item.title}</div>
+      <span class="happy-unlock ${unlocked?'unlock-yes':'unlock-no'}">${unlocked?'🔓 UNLOCKED':'🔒 LOCKED'}</span>
+    </div>
+    <div class="happy-condition">${item.condition}</div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:4px">
+      <span>Progress</span><span>${prog.current}${prog.unit} / ${prog.target}${prog.unit}</span>
+    </div>
+    <div class="progress-mini"><div class="progress-mini-fill" style="width:${pct}%;background:${unlocked?'var(--neon3)':'linear-gradient(90deg,var(--neon),var(--neon2))'}"></div></div>`;
+    el.appendChild(div);
+  });
+}
+
+function openAddHappy(){
+  document.getElementById('modalTitle').textContent='Add happy moment';
+  document.getElementById('modalContent').innerHTML=`
+    <div class="form-group"><label class="form-label">What makes you happy?</label>
+      <input class="form-input" id="hTitle" placeholder="e.g. Family time weekend" /></div>
+    <div class="form-group"><label class="form-label">Description</label>
+      <input class="form-input" id="hDesc" placeholder="What does this moment look like?" /></div>
+    <div class="form-group"><label class="form-label">Unlock condition</label>
+      <input class="form-input" id="hCond" placeholder="e.g. Hit 80% completion this week" /></div>
+    <div class="form-group"><label class="form-label">Metric to track</label>
+      <select class="form-input" id="hMetric">
+        <option value="weekday_completion">Weekday completion %</option>
+        <option value="read_streak">Reading streak (days)</option>
+        <option value="perfect_days">Perfect days this month</option>
+      </select></div>
+    <div class="form-group"><label class="form-label">Target value</label>
+      <input class="form-input" id="hTarget" type="number" value="80" /></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveHappy()">Save ✨</button>
+    </div>`;
+  document.getElementById('modalOverlay').style.display='flex';
+}
+
+function saveHappy(){
+  const title=document.getElementById('hTitle').value.trim();
+  if(!title)return;
+  store.happy.push({
+    id:Date.now(),
+    title:title,
+    desc:document.getElementById('hDesc').value.trim(),
+    condition:document.getElementById('hCond').value.trim(),
+    target:parseInt(document.getElementById('hTarget').value)||80,
+    metric:document.getElementById('hMetric').value,
+  });
+  saveStorage(store);
+  closeModal();
+  renderHappyList();
+  showToast('Happy moment added! 🎯','Work hard and earn it!');
+}
+
+function closeModal(){document.getElementById('modalOverlay').style.display='none';}
+
+const BADGES=[
+  {id:'first_habit',name:'First Step',icon:'👣',desc:'Complete first habit',check:()=>store.xp>0},
+  {id:'week_warrior',name:'Week Warrior',icon:'⚔️',desc:'7-day streak',check:()=>calcTodayStreak()>=7},
+  {id:'perfect_day',name:'Perfect Day',icon:'🏆',desc:'All 10 habits done',check:()=>getTodayDone()===HABITS.length},
+  {id:'may_legend',name:'May Legend',icon:'👑',desc:'73% in May 2026',check:()=>true},
+  {id:'reader',name:'Bookworm',icon:'📚',desc:'27-day read streak',check:()=>getReadStreak()>=5},
+  {id:'warrior_lvl',name:'Warrior',icon:'🔥',desc:'Reach Level 7',check:()=>store.level>=7},
+  {id:'century',name:'Century',icon:'💯',desc:'100+ XP in a day',check:()=>false},
+  {id:'comeback',name:'Comeback Kid',icon:'💪',desc:'Bounce back after 0-day',check:()=>true},
+  {id:'streak_10',name:'Decade Streak',icon:'⚡',desc:'10-day habit streak',check:()=>calcTodayStreak()>=10},
+  {id:'april_rise',name:'April Rise',icon:'🌅',desc:'62% in April',check:()=>true},
+  {id:'meditate_pro',name:'Zen Mind',icon:'🧘',desc:'Meditate 30 days',check:()=>false},
+  {id:'year_start',name:'Year Starter',icon:'🎆',desc:'Tracked since Jan 2026',check:()=>true},
+];
+
+function renderBadges(){
+  const el=document.getElementById('badgesGrid');
+  el.innerHTML=BADGES.map(b=>{
+    const earned=b.check();
+    return`<div class="badge-card ${earned?'earned':''}">
+      <div class="badge-icon">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+    </div>`;
+  }).join('');
+
+  const allTime=document.getElementById('allTimeStats');
+  const totalDays=Object.keys(store.habits).filter(k=>k.startsWith('2026')).length;
+  const histDays=Object.values(HISTORICAL).reduce((a,v)=>a+v.days,0);
+  allTime.innerHTML=`
+    <div class="stat-card cyan"><div class="stat-val">${store.xp.toLocaleString()}</div><div class="stat-label">Total XP</div></div>
+    <div class="stat-card gold"><div class="stat-val">${BADGES.filter(b=>b.check()).length}</div><div class="stat-label">Badges earned</div></div>
+    <div class="stat-card green"><div class="stat-val">27</div><div class="stat-label">Best streak</div></div>
+    <div class="stat-card purple"><div class="stat-val">${store.level}</div><div class="stat-label">Current level</div></div>`;
+}
+
+renderToday();
+updateHeader();
+</script>
+</body>
+</html>
